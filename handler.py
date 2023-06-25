@@ -1,8 +1,15 @@
 import os
 import pandas as pd
-from helper import get_traffic
+from helper import get_existing_file, get_traffic
 
 pd.options.display.max_colwidth = 230
+
+def mrt_traffic_file_list(event, context):
+    
+    event['mrt-traffic-file-dt'] = get_existing_file()
+    
+    return event
+
 
 def mrt_traffic(event, context):
     try:        

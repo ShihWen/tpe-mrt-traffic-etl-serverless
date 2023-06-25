@@ -1,7 +1,27 @@
 
+import boto3
 import pandas as pd
 import os
 import awswrangler as wr
+
+
+def get_existing_file()->list:
+    '''
+    Get the file from url containing MRT traffic data in monthly basis.
+
+    Args: 
+        --
+    
+    Returns:
+        A pandas dataframe with columns namely year-month and data url
+    '''
+    s3 = boto3.resource('s3')
+    bucket = s3.Bucket('online-data-lake-thirty-three')
+
+    bucket_object = bucket.objects.filter(Prefix='mrt-traffic')
+    objects = [obj.key.split('_')[1] for obj in bucket_object]
+
+    return '_'.join(objects)
 
 
 def get_mrt_traffic_data_link()->object:
