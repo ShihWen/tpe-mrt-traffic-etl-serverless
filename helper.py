@@ -1,9 +1,9 @@
-
+import json
 import boto3
 import pandas as pd
 import os
 import awswrangler as wr
-
+from botocore.exceptions import ClientError
 
 def get_existing_file()->list:
     '''
@@ -98,3 +98,55 @@ def get_traffic(data_dt:str)->list:
         input_file_dt.append( row[0] )
 
     return input_file_dt
+
+def sent_notification(input_event:dict)->dict:
+    '''
+    ref: https://codelovingyogi.medium.com/sending-emails-using-aws-simple-email-service-ses-220de9db4fc8
+
+    '''
+
+    ses_client = boto3.client('ses')
+
+    # Specify the sender's email address
+    sender_email = 'shihwenwutw@gmail.com'
+    
+    # Specify the recipient's email address
+    recipient_email = 'shihwenwutw@gmail.com'
+    
+    # Specify the email subject
+    subject = 'MRT Hourly Data Ｗeekly Updates'
+    
+    # Specify the email body
+    text = (
+    f"Number of downloaded files: {input_event['number_of_downloaded_files']}\n"
+    f"Date of downloaded files: {input_event['date_of_downloaded_files']}\n"
+    "\n"
+    "All the best"
+    )
+    try:
+        ses_client.send_email(
+            Source=sender_email,
+            Destination={
+                'ToAddresses': [recipient_email]
+            },
+            Message={
+                'Subject': {
+                    'Data': subject
+                },
+                'Body': {
+                    'Text': {
+                        'Data': text
+                    }
+                }
+            }
+        )
+        return {
+            'statusCode': 200,
+            'body': json.dumps('Email Sending Sucess!')
+        }
+    except ClientError as e:
+        return {
+            'statusCode': 200,
+            'body': json.dumps(e.response["Error"]["Message"]),
+            'event': input_event
+        }

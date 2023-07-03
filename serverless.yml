@@ -19,18 +19,23 @@ provider:
     target_db: open_data
     target_tbl: tpe_mrt_traffic
     write_data_operation: append
-
+  layers:
+    - arn:aws:lambda:ap-northeast-1:770693421928:layer:Klayers-p39-requests:13
+    - arn:aws:lambda:ap-northeast-1:336392948345:layer:AWSSDKPandas-Python39:6
 
 functions:
   mrt_traffic:
     handler: handler.mrt_traffic
-    layers:
-      - arn:aws:lambda:ap-northeast-1:770693421928:layer:Klayers-p39-requests:13
-      - arn:aws:lambda:ap-northeast-1:336392948345:layer:AWSSDKPandas-Python39:6
-    timeout: 900
-    memorySize: 4096
+    timeout: 180
+    memorySize: 2048
 
   mrt_traffic_file_list:
     handler: handler.mrt_traffic_file_list
     timeout: 180
     memorySize: 128
+
+  email_notification:
+    handler: handler.email_notification
+    timeout: 180
+    memorySize: 128 
+

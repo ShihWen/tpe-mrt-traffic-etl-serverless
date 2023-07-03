@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from helper import get_existing_file, get_traffic
+from helper import get_existing_file, get_traffic, sent_notification
 
 pd.options.display.max_colwidth = 230
 
@@ -31,3 +31,7 @@ def mrt_traffic(event, context):
         event['remaining_time_sec'] = context.get_remaining_time_in_millis()/1000
 
         return event
+    
+def email_notification(event, context):
+
+    return sent_notification(input_event=event)
